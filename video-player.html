@@ -1,56 +1,71 @@
+<!-- Container for the video and controls -->
 <div class="video-container">
+  <!-- Video element with autoplay, muted, and inline playback properties -->
   <video id="video" autoplay muted width="100%" playsinline>
+    <!-- Source for the video -->
     <source src="https://your-domain.com/your-video.mp4" type="video/mp4">
+    <!-- Fallback text for browsers that don't support the video tag -->
     Your browser does not support the video tag.
   </video>
+  <!-- Overlay that shows when the video starts -->
   <div class="overlay" id="overlay">
     <div class="overlay-content">
-      <div>The video just started</div>
+      <!-- Message indicating the video has started -->
+      <div>Tu Video ha empezado</div>
+      <!-- Speaker icon to indicate sound can be enabled -->
       <div class="speaker-icon" id="speakerIcon">🔈</div>
-      <div>Tap to unmute.</div>
+      <!-- Instruction to click to hear the video -->
+      <div>Haz click para escucharlo.</div>
     </div>
   </div>
+  <!-- Overlay that shows when the video ends -->
   <div class="end-overlay hidden" id="endOverlay">
     <div class="end-overlay-content" id="replayBtn">
-      <img id="replayIcon" class="replay-icon"
-        src="https://img.icons8.com/?size=100&id=uYts1xusglQt&format=png&color=ffffff" alt="Replay">
+      <!-- Replay icon to restart the video -->
+      <img id="replayIcon" class="replay-icon" src="https://img.icons8.com/?size=100&id=uYts1xusglQt&format=png&color=ffffff" alt="Replay">
     </div>
   </div>
+  <!-- Container for the video controls -->
   <div class="controls hidden" id="controls">
     <div class="left-controls">
+      <!-- Play/Pause button -->
       <div id="playPauseBtn" class="control-btn">
         <img id="playPauseIcon" src="https://img.icons8.com/ios-filled/50/ffffff/play.png" alt="Play">
       </div>
+      <!-- Rewind button -->
       <div id="rewindBtn" class="control-btn">
         <img src="https://img.icons8.com/ios/50/ffffff/time-machine--v1.png" alt="Rewind">
       </div>
     </div>
     <div class="right-controls">
+      <!-- Mute/Unmute button -->
       <div id="muteUnmuteBtn" class="control-btn">
         <img id="muteUnmuteIcon" src="https://img.icons8.com/ios-filled/50/ffffff/mute.png" alt="Mute">
       </div>
+      <!-- Volume slider -->
       <input type="range" value="30" min="0" max="100" id="volumeSlider">
-
+      <!-- Fullscreen button -->
       <div id="fullScreenBtn" class="control-btn">
         <img src="https://img.icons8.com/ios-filled/50/ffffff/full-screen.png" alt="Fullscreen">
       </div>
     </div>
-
   </div>
 </div>
 
-
 <style>
+  /* Style for the video container */
   .video-container {
     position: relative;
     width: 100%;
     max-width: 100%;
   }
 
+  /* Ensure the video takes up the full width of the container */
   video {
     width: 100%;
   }
 
+  /* Style for the controls container */
   .controls {
     position: absolute;
     bottom: 0;
@@ -61,12 +76,13 @@
     background: rgba(0, 0, 0, 0.5);
   }
 
+  /* Hide the controls initially */
   .controls.hidden {
     display: none;
   }
 
-  .left-controls,
-  .right-controls {
+  /* Style for the left and right control groups */
+  .left-controls, .right-controls {
     display: flex;
     align-items: center;
   }
@@ -79,9 +95,7 @@
     margin-left: 10px;
   }
 
-
-
-
+  /* Style for individual control buttons */
   .control-btn {
     background: none;
     border: none;
@@ -89,14 +103,17 @@
     cursor: pointer;
   }
 
+  /* Style for the control button images */
   .control-btn img {
     width: 30px;
   }
 
+  /* Hide native video controls */
   video::-webkit-media-controls {
     display: none;
   }
 
+  /* Style for the overlay that appears when the video starts */
   .overlay {
     position: absolute;
     top: 0;
@@ -113,14 +130,17 @@
     cursor: pointer;
   }
 
+  /* Flashing animation for the speaker icon */
   .overlay-content .speaker-icon {
     animation: flash 1s infinite;
   }
 
+  /* Flashing animation for the replay icon */
   .end-overlay-content .replay-icon {
     animation: flash 2s infinite;
   }
 
+  /* Style for the overlay content */
   .overlay-content {
     padding: 50px;
     border-width: 1px;
@@ -130,15 +150,10 @@
   }
 
   @keyframes flash {
-
-    0%,
-    50%,
-    100% {
+    0%, 50%, 100% {
       opacity: 1;
     }
-
-    25%,
-    75% {
+    25%, 75% {
       opacity: 0;
     }
   }
@@ -168,6 +183,7 @@
     background: rgba(0, 0, 0, 0.7);
   }
 
+  /* Style for the end overlay */
   .end-overlay {
     position: absolute;
     top: 0;
@@ -192,6 +208,7 @@
     border-color: white;
   }
 
+  /* Hide elements with the hidden class */
   .hidden {
     display: none;
   }
@@ -211,9 +228,9 @@
     const controls = document.getElementById('controls');
     const fullScreenBtn = document.getElementById('fullScreenBtn');
 
-
     let clickTimeout;
 
+    // Function to toggle play/pause state of the video
     function togglePlayPause() {
       if (video.paused) {
         video.play();
@@ -224,11 +241,13 @@
       }
     }
 
+    // Function to toggle fullscreen mode
     function toggleFullscreen() {
       videoContainer.classList.toggle('fullscreen');
       updateFullscreenIcon();
     }
 
+    // Update fullscreen icon based on current state
     function updateFullscreenIcon() {
       if (videoContainer.classList.contains('fullscreen')) {
         fullScreenBtn.innerHTML = '<img src="https://img.icons8.com/?size=100&id=5QW6MvfYDamx&format=png&color=ffffff" alt="Exit Fullscreen">';
@@ -237,6 +256,7 @@
       }
     }
 
+    // Update mute/unmute icon based on current state
     function updateMuteUnmuteIcon() {
       if (video.muted) {
         muteUnmuteIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/mute.png';
@@ -245,18 +265,13 @@
       }
     }
 
-
+    // Function to toggle mute/unmute state
     function toggleMuteUnmute() {
       video.muted = !video.muted;
       updateMuteUnmuteIcon();
     }
 
-    function toggleMuteUnmute() {
-      video.muted = !video.muted;
-      updateMuteUnmuteIcon();
-    }
-
-
+    // Handle volume change from slider input
     function handleVolumeChange() {
       video.volume = volumeSlider.value / 100;
       if (video.volume === 0) {
@@ -266,13 +281,9 @@
         video.muted = false;
         updateMuteUnmuteIcon();
       }
-      updateVolumeText();
     }
 
-    function updateVolumeText() {
-      volume.textContent = volumeSlider.value;
-    }
-
+    // Ensure video is not muted when interacting with the volume slider
     function handleSliderInteraction() {
       if (video.muted) {
         video.muted = false;
@@ -280,6 +291,7 @@
       }
     }
 
+    // Toggle play/pause on video click with double click for fullscreen
     video.addEventListener('click', function () {
       if (clickTimeout) {
         clearTimeout(clickTimeout);
@@ -293,6 +305,7 @@
       }
     });
 
+    // Event listeners for control buttons
     playPauseBtn.addEventListener('click', togglePlayPause);
     rewindBtn.addEventListener('click', function () {
       video.currentTime = Math.max(0, video.currentTime - 10);
@@ -303,12 +316,12 @@
       updateFullscreenIcon();
     });
 
-
     muteUnmuteBtn.addEventListener('click', toggleMuteUnmute);
     volumeSlider.addEventListener('input', handleVolumeChange);
     volumeSlider.addEventListener('mousedown', handleSliderInteraction);
     volumeSlider.addEventListener('touchstart', handleSliderInteraction);
 
+    // Prevent fast forwarding past the buffered end
     video.addEventListener('timeupdate', function () {
       if (video.currentTime > video.buffered.end(0) - 0.5) {
         video.currentTime = video.buffered.end(0) - 0.5;
@@ -321,6 +334,7 @@
       }
     });
 
+    // Remove the overlay when clicked and show controls
     overlay.addEventListener('click', function () {
       video.muted = false;
       overlay.style.display = 'none';
@@ -328,6 +342,7 @@
       updateMuteUnmuteIcon();
     });
 
+    // Update play/pause icon based on video state
     video.addEventListener('play', function () {
       playPauseIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/pause.png';
     });
@@ -353,25 +368,30 @@
     const replayBtn = document.getElementById('replayBtn');
     const endOverlay = document.getElementById('endOverlay');
 
+    // Show controls
     function showControls() {
       controls.classList.remove('hidden');
     }
 
+    // Hide controls
     function hideControls() {
       controls.classList.add('hidden');
     }
 
+    // Handle mouse over controls
     function handleMouseOverControls() {
       isMouseOverControls = true;
       showControls();
       clearTimeout(controlsTimeout);
     }
 
+    // Handle mouse leave controls
     function handleMouseLeaveControls() {
       isMouseOverControls = false;
       hideControlsAfterDelay();
     }
 
+    // Hide controls after a delay
     function hideControlsAfterDelay() {
       clearTimeout(controlsTimeout);
       controlsTimeout = setTimeout(() => {
@@ -381,6 +401,7 @@
       }, 2000);
     }
 
+    // Add event listeners to show and hide controls on interaction
     controls.addEventListener('mouseenter', handleMouseOverControls);
     controls.addEventListener('mouseleave', handleMouseLeaveControls);
 
@@ -402,6 +423,7 @@
       showControls();
     });
 
+    // Remove overlay and unmute video on overlay click
     overlay.addEventListener('click', () => {
       video.muted = false;
       overlay.style.display = 'none';
@@ -412,6 +434,7 @@
     let lastTime = null;
     let sameTimeCount = 0;
 
+    // Handle video end state
     function handleVideoEnd() {
       video.pause();
       endOverlay.classList.remove('hidden');
@@ -420,6 +443,7 @@
       todoAfterEnding();
     }
 
+    // Replay the video
     function replayVideo() {
       video.currentTime = 0;
       video.play();
@@ -442,6 +466,7 @@
       }
     });
 
+    // Replay the video when end overlay is clicked
     endOverlay.addEventListener('click', function () {
       replayVideo();
     });
@@ -449,7 +474,5 @@
     function todoAfterEnding() {
       // Do something after the video ends
     }
-
   });
-
 </script>
