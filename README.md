@@ -14,3 +14,9 @@ An advanced video player designed for landing pages, featuring custom controls, 
 ## Demo
 
 Check out a live demo of the video player [here](https://elegot.com/video-player/).
+
+## Usage
+
+To use this video player, simply include the provided HTML structure and associated CSS and JavaScript in your project.
+
+![Video Player](https://imgur.com/74EjcBe)
