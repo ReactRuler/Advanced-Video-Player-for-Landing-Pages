@@ -1,0 +1,455 @@
+<div class="video-container">
+  <video id="video" autoplay muted width="100%" playsinline>
+    <source src="https://elegot.com/wp-content/uploads/2024/05/30-seconds-timer.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="overlay" id="overlay">
+    <div class="overlay-content">
+      <div>Tu Video ha empezado</div>
+      <div class="speaker-icon" id="speakerIcon">🔈</div>
+      <div>Haz click para escucharlo.</div>
+    </div>
+  </div>
+  <div class="end-overlay hidden" id="endOverlay">
+    <div class="end-overlay-content" id="replayBtn">
+      <img id="replayIcon" class="replay-icon"
+        src="https://img.icons8.com/?size=100&id=uYts1xusglQt&format=png&color=ffffff" alt="Replay">
+    </div>
+  </div>
+  <div class="controls hidden" id="controls">
+    <div class="left-controls">
+      <div id="playPauseBtn" class="control-btn">
+        <img id="playPauseIcon" src="https://img.icons8.com/ios-filled/50/ffffff/play.png" alt="Play">
+      </div>
+      <div id="rewindBtn" class="control-btn">
+        <img src="https://img.icons8.com/ios/50/ffffff/time-machine--v1.png" alt="Rewind">
+      </div>
+    </div>
+    <div class="right-controls">
+      <div id="muteUnmuteBtn" class="control-btn">
+        <img id="muteUnmuteIcon" src="https://img.icons8.com/ios-filled/50/ffffff/mute.png" alt="Mute">
+      </div>
+      <input type="range" value="30" min="0" max="100" id="volumeSlider">
+
+      <div id="fullScreenBtn" class="control-btn">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/full-screen.png" alt="Fullscreen">
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<style>
+  .video-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  video {
+    width: 100%;
+  }
+
+  .controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .controls.hidden {
+    display: none;
+  }
+
+  .left-controls,
+  .right-controls {
+    display: flex;
+    align-items: center;
+  }
+
+  .right-controls {
+    margin-right: 10px;
+  }
+
+  .right-controls .control-btn {
+    margin-left: 10px;
+  }
+
+
+
+
+  .control-btn {
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .control-btn img {
+    width: 30px;
+  }
+
+  video::-webkit-media-controls {
+    display: none;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+    cursor: pointer;
+  }
+
+  .overlay-content .speaker-icon {
+    animation: flash 1s infinite;
+  }
+
+  .end-overlay-content .replay-icon {
+    animation: flash 2s infinite;
+  }
+
+  .overlay-content {
+    padding: 50px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 25px;
+    border-color: white;
+  }
+
+  @keyframes flash {
+
+    0%,
+    50%,
+    100% {
+      opacity: 1;
+    }
+
+    25%,
+    75% {
+      opacity: 0;
+    }
+  }
+
+  /* Fake fullscreen styles */
+  .video-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-container.fullscreen video {
+    width: 100%;
+    height: auto;
+  }
+
+  .video-container.fullscreen .controls {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .end-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 22;
+    cursor: pointer;
+  }
+
+  .end-overlay-content {
+    padding: 50px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 25px;
+    border-color: white;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const video = document.getElementById('video');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseIcon = document.getElementById('playPauseIcon');
+    const rewindBtn = document.getElementById('rewindBtn');
+    const muteUnmuteBtn = document.getElementById('muteUnmuteBtn');
+    const muteUnmuteIcon = document.getElementById('muteUnmuteIcon');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const videoContainer = document.querySelector('.video-container');
+    const overlay = document.getElementById('overlay');
+    const controls = document.getElementById('controls');
+    const fullScreenBtn = document.getElementById('fullScreenBtn');
+
+
+    let clickTimeout;
+
+    function togglePlayPause() {
+      if (video.paused) {
+        video.play();
+        playPauseIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/pause.png';
+      } else {
+        video.pause();
+        playPauseIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/play.png';
+      }
+    }
+
+    function toggleFullscreen() {
+      videoContainer.classList.toggle('fullscreen');
+      updateFullscreenIcon();
+    }
+
+    function updateFullscreenIcon() {
+      if (videoContainer.classList.contains('fullscreen')) {
+        fullScreenBtn.innerHTML = '<img src="https://img.icons8.com/?size=100&id=5QW6MvfYDamx&format=png&color=ffffff" alt="Exit Fullscreen">';
+      } else {
+        fullScreenBtn.innerHTML = '<img src="https://img.icons8.com/ios-filled/50/ffffff/full-screen.png" alt="Fullscreen">';
+      }
+    }
+
+    function updateMuteUnmuteIcon() {
+      if (video.muted) {
+        muteUnmuteIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/mute.png';
+      } else {
+        muteUnmuteIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/speaker.png';
+      }
+    }
+
+
+    function toggleMuteUnmute() {
+      video.muted = !video.muted;
+      updateMuteUnmuteIcon();
+    }
+
+    function toggleMuteUnmute() {
+      video.muted = !video.muted;
+      updateMuteUnmuteIcon();
+    }
+
+
+    function handleVolumeChange() {
+      video.volume = volumeSlider.value / 100;
+      if (video.volume === 0) {
+        video.muted = true;
+        updateMuteUnmuteIcon();
+      } else {
+        video.muted = false;
+        updateMuteUnmuteIcon();
+      }
+      updateVolumeText();
+    }
+
+    function updateVolumeText() {
+      volume.textContent = volumeSlider.value;
+    }
+
+    function handleSliderInteraction() {
+      if (video.muted) {
+        video.muted = false;
+        updateMuteUnmuteIcon();
+      }
+    }
+
+    video.addEventListener('click', function () {
+      if (clickTimeout) {
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        toggleFullscreen();
+      } else {
+        clickTimeout = setTimeout(() => {
+          togglePlayPause();
+          clickTimeout = null;
+        }, 300);
+      }
+    });
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    rewindBtn.addEventListener('click', function () {
+      video.currentTime = Math.max(0, video.currentTime - 10);
+    });
+
+    fullScreenBtn.addEventListener('click', function () {
+      toggleFullscreen();
+      updateFullscreenIcon();
+    });
+
+
+    muteUnmuteBtn.addEventListener('click', toggleMuteUnmute);
+    volumeSlider.addEventListener('input', handleVolumeChange);
+    volumeSlider.addEventListener('mousedown', handleSliderInteraction);
+    volumeSlider.addEventListener('touchstart', handleSliderInteraction);
+
+    video.addEventListener('timeupdate', function () {
+      if (video.currentTime > video.buffered.end(0) - 0.5) {
+        video.currentTime = video.buffered.end(0) - 0.5;
+      }
+    });
+
+    video.addEventListener('seeked', function () {
+      if (video.currentTime > video.buffered.end(0)) {
+        video.currentTime = video.buffered.end(0) - 0.5;
+      }
+    });
+
+    overlay.addEventListener('click', function () {
+      video.muted = false;
+      overlay.style.display = 'none';
+      controls.classList.remove('hidden');
+      updateMuteUnmuteIcon();
+    });
+
+    video.addEventListener('play', function () {
+      playPauseIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/pause.png';
+    });
+
+    video.addEventListener('pause', function () {
+      playPauseIcon.src = 'https://img.icons8.com/ios-filled/50/ffffff/play.png';
+    });
+
+    // Periodically check the video current time to prevent fast forwarding
+    setInterval(function () {
+      if (video.currentTime > video.buffered.end(0)) {
+        video.currentTime = video.buffered.end(0) - 0.5;
+      }
+    }, 1000);
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const video = document.getElementById('video');
+    const controls = document.getElementById('controls');
+    const overlay = document.getElementById('overlay');
+    let controlsTimeout;
+    let isMouseOverControls = false;
+    const replayBtn = document.getElementById('replayBtn');
+    const endOverlay = document.getElementById('endOverlay');
+
+    function showControls() {
+      controls.classList.remove('hidden');
+    }
+
+    function hideControls() {
+      controls.classList.add('hidden');
+    }
+
+    function handleMouseOverControls() {
+      isMouseOverControls = true;
+      showControls();
+      clearTimeout(controlsTimeout);
+    }
+
+    function handleMouseLeaveControls() {
+      isMouseOverControls = false;
+      hideControlsAfterDelay();
+    }
+
+    function hideControlsAfterDelay() {
+      clearTimeout(controlsTimeout);
+      controlsTimeout = setTimeout(() => {
+        if (!video.paused && !isMouseOverControls) {
+          hideControls();
+        }
+      }, 2000);
+    }
+
+    controls.addEventListener('mouseenter', handleMouseOverControls);
+    controls.addEventListener('mouseleave', handleMouseLeaveControls);
+
+    video.addEventListener('mousemove', () => {
+      showControls();
+      hideControlsAfterDelay();
+    });
+
+    video.addEventListener('play', () => {
+      hideControlsAfterDelay();
+    });
+
+    video.addEventListener('pause', () => {
+      clearTimeout(controlsTimeout);
+      showControls();
+    });
+
+    video.addEventListener('ended', () => {
+      showControls();
+    });
+
+    overlay.addEventListener('click', () => {
+      video.muted = false;
+      overlay.style.display = 'none';
+      controls.classList.remove('hidden');
+      updateMuteUnmuteIcon();
+    });
+
+    let lastTime = null;
+    let sameTimeCount = 0;
+
+    function handleVideoEnd() {
+      video.pause();
+      endOverlay.classList.remove('hidden');
+      lastTime = null;
+      sameTimeCount = 0;
+      todoAfterEnding();
+    }
+
+    function replayVideo() {
+      video.currentTime = 0;
+      video.play();
+      endOverlay.classList.add('hidden');
+    }
+
+    // Monitor video current time
+    video.addEventListener('timeupdate', function () {
+      const currentTime = video.currentTime;
+
+      if (currentTime === lastTime) {
+        sameTimeCount++;
+      } else {
+        sameTimeCount = 0;
+        lastTime = currentTime;
+      }
+
+      if (sameTimeCount >= 1) {
+        handleVideoEnd();
+      }
+    });
+
+    endOverlay.addEventListener('click', function () {
+      replayVideo();
+    });
+
+    function todoAfterEnding() {
+      // Do something after the video ends
+    }
+
+  });
+
+</script>
