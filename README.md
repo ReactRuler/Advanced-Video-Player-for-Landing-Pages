@@ -19,4 +19,4 @@ Check out a live demo of the video player [here](https://elegot.com/video-player
 
 To use this video player, simply include the provided HTML structure and associated CSS and JavaScript in your project.
 
-![Video Player](https://imgur.com/74EjcBe)
+![Video Player](https://imgur.com/74EjcBe.png)
