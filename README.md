@@ -13,4 +13,4 @@ An advanced video player designed for landing pages, featuring custom controls, 
 
 ## Demo
 
-Check out a live demo of the video player [here](https://your-demo-link.com).
+Check out a live demo of the video player [here](https://elegot.com/video-player/).
